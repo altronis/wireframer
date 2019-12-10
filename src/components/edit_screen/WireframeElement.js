@@ -1,17 +1,25 @@
 import React from 'react';
+import { Rnd } from 'react-rnd';
 
 class WireframeElement extends React.Component {
 
     render() {
         const element = this.props.element;
         const zoomLevel = this.props.zoomLevel;
+        const selected = this.props.selected;
+
+        const defaultPosition = {
+            y: element.dimensions.top_pos * zoomLevel,
+            x: element.dimensions.left_pos * zoomLevel
+        };
+
+        const defaultSize = {
+            height: element.dimensions.height * zoomLevel,
+            width: element.dimensions.width * zoomLevel
+        }
 
         const elementStyle = {
             position: "absolute",
-            top: element.dimensions.top_pos * zoomLevel,
-            left: element.dimensions.left_pos * zoomLevel,
-            height: element.dimensions.height ? element.dimensions.height * zoomLevel : "",
-            width: element.dimensions.width ? element.dimensions.width * zoomLevel : "",
 
             borderWidth: element.border ? element.border.thickness * zoomLevel : 0,
             borderStyle: "solid",
@@ -24,42 +32,53 @@ class WireframeElement extends React.Component {
             color: element.text ? element.text.color : ""
         };
 
-        const topLeftHandleStyle = {
-            display: this.props.selected ? "block" : "none",
-            top: (element.dimensions.top_pos - 4) * zoomLevel,
-            left: (element.dimensions.left_pos - 4) * zoomLevel
-        };
-
-        const bottomLeftHandleStyle = {
-            display: this.props.selected ? "block" : "none",
-            top: (element.dimensions.top_pos + element.dimensions.height - 4) * zoomLevel,
-            left: (element.dimensions.left_pos - 4) * zoomLevel
-        };
-
-        const topRightHandleStyle = {
-            display: this.props.selected ? "block" : "none",
-            top: (element.dimensions.top_pos - 4) * zoomLevel,
-            left: (element.dimensions.left_pos + element.dimensions.width - 4) * zoomLevel
-        };
-
-        const bottomRightHandleStyle = {
-            display: this.props.selected ? "block" : "none",
-            top: (element.dimensions.top_pos + element.dimensions.height - 4) * zoomLevel,
-            left: (element.dimensions.left_pos + element.dimensions.width - 4) * zoomLevel
+        const resizeHandleStyle = {
+            display: selected ? "block" : "none",
         };
         
         return (
-            <div>
-                <div style={elementStyle} className={"valign-wrapper hoverable element " + this.props.element.type + (this.props.selected ? " selected" : "")}
-                    onClick={(e) => this.props.handleSelect(e, this.props.element.key)}>
+                <Rnd style={elementStyle} 
+                    position={defaultPosition}
+                    size={defaultSize}
+                    className={"valign-wrapper hoverable element " + this.props.element.type + (this.props.selected ? " selected" : "")}
+                    onClick={(e) => this.props.handleSelect(e, this.props.element.key)}
+                    resizeHandleStyles = {{
+                        topRight: resizeHandleStyle,
+                        topLeft: resizeHandleStyle,
+                        bottomRight: resizeHandleStyle,
+                        bottomLeft: resizeHandleStyle
+                    }}
+                    resizeHandleClasses = {{
+                        topRight: "resize-handle",
+                        topLeft: "resize-handle",
+                        bottomRight: "resize-handle",
+                        bottomLeft: "resize-handle"
+                    }}
+                    enableResizing = {{
+                        bottom: false,
+                        bottomLeft: selected,
+                        bottomRight: selected,
+                        left: false,
+                        right: false,
+                        top: false,
+                        topLeft: selected,
+                        topRight: selected
+                    }}
+                    disableDragging = {!selected}
+                    onResizeStop={
+                        (e, direction, ref, delta, position) => this.props.handleResize(delta.width, delta.height, position.x, position.y, element.key)
+                    }
+                    onDragStop={
+                        (e, d) => this.props.handleResize(0, 0, d.x, d.y, element.key)
+                    }
+                    >
                     <p>{element.text ? element.text.contents : ""}</p>
-                </div>
-
-                <div style={topLeftHandleStyle} className="resize-handle"></div>
-                <div style={bottomLeftHandleStyle} className="resize-handle"></div>
-                <div style={topRightHandleStyle} className="resize-handle"></div>
-                <div style={bottomRightHandleStyle} className="resize-handle"></div>
-            </div>
+                    
+                    {/* <div style={topLeftHandleStyle} className="resize-handle"></div>
+                    <div style={bottomLeftHandleStyle} className="resize-handle"></div>
+                    <div style={topRightHandleStyle} className="resize-handle"></div>
+                    <div style={bottomRightHandleStyle} className="resize-handle"></div> */}
+                </Rnd>
         );
     }
 }

@@ -29,6 +29,18 @@ class EditScreen extends Component {
         });
     }
 
+    dialog = () => {
+        if (!toast.isActive("dialog")) {
+            toast("Do you want to save changes to " + this.state.wireframe.name + "?", {
+                autoClose: false,
+                toastId: "dialog",
+                position: "top-center",
+                bodyClassName: "dialog-message",
+                closeOnClick: false
+            });
+        }
+    }
+
     handleChange = () => {
         const newName = document.getElementById("name").value;
         const newHeight = document.getElementById("height").value;
@@ -66,6 +78,23 @@ class EditScreen extends Component {
         }).then(() => {
             this.setState({needToSave: false});
             this.notify("Saved", "blue");
+        });
+    }
+
+    handleSaveClose = () => {
+        const newWireframe = this.state.wireframe;
+        const thisDoc = getFirestore().collection("wireframes").doc(this.state.wireframe.id);
+
+        thisDoc.update({
+            elements: newWireframe.elements,
+            height: newWireframe.height,
+            name: newWireframe.name,
+            width: newWireframe.width
+        }).then(() => {
+            this.setState({needToSave: false});
+            this.notify("Saved", "blue");
+        }).then(() => {
+            this.setState({redirect: true});
         });
     }
 
@@ -175,6 +204,24 @@ class EditScreen extends Component {
         this.setState({selectedElement: key});
     }
 
+    handleResize(deltaWidth, deltaHeight, newLeft, newTop, key) {
+        let newWireframe = {...this.state.wireframe};
+        let elementToChange = newWireframe.elements.filter(element => element.key === key)[0];
+        elementToChange.dimensions.height += deltaHeight;
+        elementToChange.dimensions.width += deltaWidth;
+        elementToChange.dimensions.left_pos = newLeft;
+        elementToChange.dimensions.top_pos = newTop;
+
+        for (var i = 0; i < newWireframe.elements.length; i ++) {
+            if (i === key)
+                newWireframe.elements[i] = elementToChange;
+        }
+
+        console.log(elementToChange);
+
+        this.setState({wireframe: newWireframe, needToSave: true});
+    }
+
     componentDidMount() {
         // Set timestamp of wireframe to now
         const wireframe = this.props.wireframe;
@@ -201,10 +248,15 @@ class EditScreen extends Component {
             return <Redirect to="/" />;
         }
 
+        const logo = document.getElementById("logo");
+        logo.addEventListener("click", () => this.dialog());
+
         try {
             let elements = this.state.wireframe.elements;
 
             const trigger = <i className="icon-button material-icons">close</i>
+            const banner = document.getElementById("logo");
+            console.log(banner);
 
             return (
                 <div id="editor" className="container grey lighten-1">
@@ -217,11 +269,12 @@ class EditScreen extends Component {
                                 <i className="icon-button material-icons" onClick={() => this.handleZoom(0.5)}>zoom_out</i>
                                 <i className="icon-button material-icons" onClick={this.handleSave}>save</i>
                                 {this.state.needToSave ? 
-                                    <Modal header="Close without saving?" trigger={trigger}
+                                    <Modal header={"Do you want to save changes to " + this.state.wireframe.name + "?"} trigger={trigger}
                                         actions={
                                             <div className="buttons">
-                                                <span id="yes_button" className="dialog_button" onClick={this.handleClose}>YES</span>
-                                                <span id="no_button" className="dialog_button modal-close">NO</span>
+                                                <span className="dialog_button" onClick={this.handleSaveClose}>SAVE</span>
+                                                <span id="yes_button" className="dialog_button" onClick={this.handleClose}>DON'T SAVE</span>
+                                                <span id="no_button" className="dialog_button modal-close">CANCEL</span>
                                             </div>
                                         }
                                     >
@@ -281,6 +334,7 @@ class EditScreen extends Component {
                                         <WireframeElement key={element.key} element={element} 
                                                           zoomLevel={this.state.zoomLevel} 
                                                           handleSelect={this.handleSelect.bind(this)}
+                                                          handleResize={this.handleResize.bind(this)}
                                                           selected={element.key === this.state.selectedElement} />
                                     ))
                                 }

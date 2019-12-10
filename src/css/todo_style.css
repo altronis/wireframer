@@ -69,6 +69,10 @@ div.banner {
   font-size: 18px;
 }
 
+.dialog-message {
+  color: black;
+}
+
 .icon-button:hover {
   color: lightgray;
 }

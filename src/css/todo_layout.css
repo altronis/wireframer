@@ -18,6 +18,10 @@ body {
   width: 100%;
 }
 
+#logo {
+  cursor: pointer;
+}
+
 .new-wireframe {
   text-align: center;
   cursor: pointer;
@@ -96,9 +100,8 @@ form {
 }
 
 .resize-handle {
-  position: absolute;
-  height: 8px;
-  width: 8px;
+  height: 10px !important;
+  width: 10px !important;
 }
 
 h5.header {
@@ -152,22 +155,17 @@ tr.item_row, .clickable {
   right: 0 !important;
 }
 
-.fixed-action-btn {
-  position: relative;
-  right: 0;
-  bottom: 0;
-}
-
-.fixed-action-btn ul {
-  right: 90% !important;
-}
-
-.element.button {
+.element.button p {
+  margin: 0 auto;
   text-align: center;
 }
 
-.element.button p {
-  margin: 0 auto;
+.element.textfield p {
+  padding-left: 5px;
+}
+
+.element {
+  display: flex !important;
 }
 
 .buttons {

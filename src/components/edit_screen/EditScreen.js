@@ -72,6 +72,100 @@ class EditScreen extends Component {
         this.setState({redirect: true});
     }
 
+    handleNew = (type) => {
+        const numElements = this.state.wireframe.elements.length;
+        const height = this.state.wireframe.height;
+        const width = this.state.wireframe.width;
+        let newElement;
+
+        if (type === "container") {
+            newElement = {
+                key: numElements,
+                type: "container",
+                background_color: "#FFFFFF",
+                dimensions: {
+                    top_pos: 0,
+                    left_pos: 0,
+                    height: height >= 200 ? 100 : height / 2,
+                    width: width >= 200 ? 100 : width / 2
+                },
+                border: {
+                    thickness: 2,
+                    radius: 2,
+                    color: "#000000"
+                }
+            };
+        } 
+        else if (type === "label") {
+            newElement = {
+                key: numElements,
+                type: "label",
+                dimensions: {
+                    top_pos: 0,
+                    left_pos: 0,
+                    height: height >= 50 ? 25 : height / 2,
+                    width: width >= 200 ? 100 : width / 2
+                },
+                text: {
+                    contents: "Prompt for input:",
+                    font_size: 12,
+                    color: "#000000"
+                }
+            };
+        }
+        else if (type === "button") {
+            newElement = {
+                key: numElements,
+                type: "button",
+                background_color: "#D3D3D3",
+                dimensions: {
+                    top_pos: 0,
+                    left_pos: 0,
+                    height: height >= 50 ? 25 : height / 2,
+                    width: width >= 150 ? 75 : width / 2
+                },
+                border: {
+                    thickness: 2,
+                    radius: 2,
+                    color: "#000000"
+                }, 
+                text: {
+                    contents: "Submit",
+                    font_size: 14,
+                    color: "#000000"
+                }
+            };
+        } 
+        else if (type === "textfield") {
+            newElement = {
+                key: numElements,
+                type: "textfield",
+                background_color: "#FFFFFF",
+                dimensions: {
+                    top_pos: 0,
+                    left_pos: 0,
+                    height: height >= 50 ? 25 : height / 2,
+                    width: width >= 200 ? 100 : width / 2
+                },
+                border: {
+                    thickness: 2,
+                    radius: 2,
+                    color: "#000000"
+                }, 
+                text: {
+                    contents: "Input",
+                    font_size: 14,
+                    color: "#80808F"
+                }
+            };
+        }
+
+        let newWireframe = {...this.state.wireframe};
+        newWireframe.elements.push(newElement);
+
+        this.setState({wireframe: newWireframe, needToSave: true});
+    }
+
     componentDidMount() {
         // Set timestamp of wireframe to now
         const wireframe = this.props.wireframe;
@@ -149,6 +243,25 @@ class EditScreen extends Component {
                                 </div>
                                 <a id="update-button" className="waves-effect blue waves-light btn"
                                         onClick={this.handleChange}>Update info</a>
+                            </div>
+
+                            <div id="add-elements">
+                                 <div class="add-element" onClick={this.handleNew.bind(this, "container")}>
+                                    <div id="example-container"></div>
+                                    <p class="element-type">Container</p>
+                                 </div>
+                                 <div class="add-element" onClick={this.handleNew.bind(this, "label")}>
+                                    <div >Prompt for input:</div>
+                                    <p class="element-type">Label</p>
+                                 </div>
+                                 <div class="add-element" onClick={this.handleNew.bind(this, "button")}>
+                                    <div id="example-button">Submit</div>
+                                    <p class="element-type">Button</p>
+                                 </div>
+                                 <div class="add-element" onClick={this.handleNew.bind(this, "textfield")}>
+                                    <div id="example-textfield">Input</div>
+                                    <p class="element-type">Textfield</p>
+                                 </div>
                             </div>
                         </div>
 

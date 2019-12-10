@@ -74,7 +74,9 @@
                     "type": "label",
                     "dimensions": {
                         "top_pos": 150,
-                        "left_pos": 250
+                        "left_pos": 250,
+                        "height": 50,
+                        "width": 200
                     },
                     "text": {
                         "contents": "Enter your social security number:",

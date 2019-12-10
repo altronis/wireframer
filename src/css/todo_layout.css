@@ -64,6 +64,37 @@ form {
   margin: 0;
 }
 
+.add-element {
+  text-align: center;
+  padding: 30px 0;
+  cursor: pointer;
+}
+
+#update-button {
+  margin-bottom: 20px;
+}
+
+#example-container {
+  height: 60px;
+  width: 60%;
+  margin: 0 auto;
+  padding-top: 30px;
+}
+
+#example-button {
+  height: 25px;
+  width: 30%;
+  margin: 0 auto;
+}
+
+#example-textfield {
+  height: 25px;
+  width: 70%;
+  margin: 0 auto;
+  text-align: left;
+  padding-left: 5px;
+}
+
 h5.header {
   display: inline-block;
 }
@@ -93,7 +124,7 @@ tr.item_row, .clickable {
 #edit-window {
   position: relative;
   overflow: auto;
-  max-height: 80vh;
+  max-height: 85vh;
   max-width: 100%;
   padding: 0;
 }

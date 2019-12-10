@@ -73,6 +73,35 @@ div.banner {
   color: lightgray;
 }
 
+.add-element:hover {
+  background-color: lightgray;
+}
+
+#example-container {
+  border: 2px solid black;
+  border-radius: 5px;
+}
+
+#example-button {
+  border: 2px solid black;
+  border-radius: 3px;
+  background-color: lightgray;
+}
+
+#example-textfield {
+  border: 2px solid black;
+  border-radius: 3px;
+  color: gray;
+}
+
+#wireframe-info {
+  border-bottom: 2px solid lightgray;
+}
+
+.element-type {
+  font-weight: bold;
+}
+
 #trashcan {
   font-size: 30pt;
   cursor: pointer;

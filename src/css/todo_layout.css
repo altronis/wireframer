@@ -1,0 +1,155 @@
+html {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100%;
+}
+
+body {
+  position: absolute;
+  width: 100%;
+}
+
+.new-wireframe {
+  text-align: center;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+div.banner {
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.wireframe_header {
+  position: relative;
+}
+
+form {
+  padding: 20px;
+  text-align: center;
+}
+
+.login_form {
+  padding-top: 20px !important;
+}
+
+#wireframe-info {
+  padding: 10px;
+  text-align: center;
+}
+
+.input.row {
+  margin-bottom: 0;
+}
+
+.input-field.inline {
+  width: 50%;
+}
+
+.input-field label {
+  top: 5px;
+  left: 10px;
+}
+
+.input-field.item {
+  margin: 0;
+}
+
+h5.header {
+  display: inline-block;
+}
+
+#trashcan {
+  position: absolute;
+  right: 5%;
+}
+
+tr.item_row, .clickable {
+  cursor: pointer;
+}
+
+.container.grey {
+  max-width: none;
+}
+
+#editor {
+  padding: 0;
+  width: 100%;
+}
+
+#leftbar {
+  padding: 0;
+}
+
+#edit-window {
+  position: relative;
+  overflow: auto;
+  max-height: 80vh;
+  max-width: 100%;
+  padding: 0;
+}
+
+.icon-button {
+  font-size: 30px;
+  padding: 5px;
+  vertical-align: middle;
+  cursor: pointer;
+  color: white;
+}
+
+#actions {
+  text-align: center;
+}
+
+.action {
+  bottom: 7px;
+  right: 0 !important;
+}
+
+.fixed-action-btn {
+  position: relative;
+  right: 0;
+  bottom: 0;
+}
+
+.fixed-action-btn ul {
+  right: 90% !important;
+}
+
+.buttons {
+  text-align: center;
+}
+
+.dialog_button {
+  cursor: pointer;
+  margin: 0 15px;
+  border: none;
+}
+
+.item-form-button {
+  font-size: 16px;
+}
+
+input[type=text]:not(.browser-default):focus:not([readonly]),
+input[type=email]:not(.browser-default):focus:not([readonly]),
+input[type=password]:not(.browser-default):focus:not([readonly]),
+textarea.materialize-textarea:focus:not([readonly]){
+  border-color: #ec407a;
+  box-shadow: none;
+}
+
+input[type=text]:not(.browser-default):focus:not([readonly]) + label,
+textarea.materialize-textarea:focus:not([readonly]) + label,
+input[type=email]:not(.browser-default):focus:not([readonly]) + label,
+input[type=password]:not(.browser-default):focus:not([readonly]) + label{
+  color: #ec407a !important;
+}

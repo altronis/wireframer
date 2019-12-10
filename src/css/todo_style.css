@@ -1,0 +1,146 @@
+:root {
+  /* 
+      FIRST WE'LL DEFINE OUR SWATCHES, i.e. THE COMPLEMENTARY
+      COLORS THAT WE'LL USE TOGETHER IN MULTIPLE PLACES THAT
+      TOGETHER WILL MAKE UP A GIVEN THEME
+  */
+  --swatch-foundation:    #EEEEDD; /* USED FOR BODY BACKGROUND */
+}
+
+body {
+  background-color: var(--swatch-foundation);
+}
+
+div.banner {
+  background-image: linear-gradient(to bottom,         
+  #b8b808, #636723);
+  color: white;
+  font-size: 48pt;
+  padding-left: 10%;
+  padding-top: 5%;
+  padding-bottom: 5%;
+}
+
+.new-wireframe {
+  background-color: #bbdefb;
+}
+
+.new-wireframe:hover {
+  background-color: #64b5f6;
+  transition: 0.25s;
+}
+
+.wireframe-link {
+  transition: 0.25s;
+}
+
+.wireframe-link:hover {
+  background-color: #E0E0E0;
+  transition: 0.25s;
+}
+
+.red-background {
+  background-color: #e85642 !important;
+}
+
+.blue-background {
+  background-color: #2196f3 !important;
+}
+
+#leftbar {
+  border-right: 2px solid gray;
+}
+
+#wireframe-window {
+  background-color: white;
+}
+
+.button-element p {
+  margin: auto;
+}
+
+.progress-bar {
+  background: none !important;
+  background-color: white !important;
+}
+
+.message {
+  color: white;
+  font-size: 18px;
+}
+
+#trashcan {
+  font-size: 30pt;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+#trashcan:hover {
+  color: #999999;
+}
+
+.clickable {
+  transition: 0.25s;
+}
+
+.clickable:hover {
+  color: #888888;
+}
+
+.fixed-action-btn .action {
+  opacity: 0;
+  transform: scale(0.4) translateX(40px) translateY(0px);
+  transition: 0.25s;
+}
+
+.fixed-action-btn.active .action {
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1) translateX(0px) translateY(0px);
+  transition: 0.25s;
+}
+
+.dialog_button {
+  background-color: transparent;
+  font-size: 16px;
+  transition: 0.25s;
+}
+
+#yes_button:hover {
+  color: red;
+  transition: 0.25s;
+}
+
+.completed { 
+  color: green;
+}
+
+.pending {
+  color: red;
+}
+
+tr.item_row {
+  transition: 0.25s;
+}
+
+tr.item_row:hover { 
+  background-color: #e3f2fd !important;
+  transition: 0.25s
+}
+
+/* ITEM SCREEN CONTROLS */
+#item_heading {
+  font-size: 16pt;
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* ITEM SCREEN CLASSES */
+.item_prompt {
+  font-size: 14pt;
+  font-weight: bold;
+  line-height: 1;
+}
+.item_input {
+  font-size: 14pt;
+}

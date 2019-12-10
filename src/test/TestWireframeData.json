@@ -1,0 +1,109 @@
+{
+    "wireframes": [
+        {
+            "key": 0,
+            "name": "My first wireframe",
+            "owner": "test@test.com",
+            "width": 1024,
+            "height": 768,
+            "elements": [
+                {
+                    "key": 0,
+                    "type": "container",
+                    "background_color": "#FF00FF",
+                    "dimensions": {
+                        "top_pos": 100,
+                        "left_pos": 200,
+                        "height": 500,
+                        "width": 700
+                    },
+                    "border": {
+                        "thickness": 3,
+                        "radius": 5,
+                        "color": "#000000"
+                    }
+                },
+                {
+                    "key": 1,
+                    "type": "button",
+                    "background_color": "#333333",
+                    "dimensions": {
+                        "top_pos": 500,
+                        "left_pos": 500,
+                        "height": 50,
+                        "width": 100
+                    },
+                    "border": {
+                        "thickness": 2,
+                        "radius": 2,
+                        "color": "#FF0000"
+                    },
+                    "text": {
+                        "contents": "Do stuff",
+                        "font_size": 14,
+                        "color": "#FFFFFF"
+                    }
+                }
+            ]
+        },
+        {
+            "key": 1,
+            "name": "Non-suspicious survey",
+            "owner": "test@test.com",
+            "width": 800,
+            "height": 600,
+            "elements": [
+                {
+                    "key": 0,
+                    "type": "container",
+                    "background_color": "#FFFFFF",
+                    "dimensions": {
+                        "top_pos": 100,
+                        "left_pos": 200,
+                        "height": 400,
+                        "width": 400
+                    },
+                    "border": {
+                        "thickness": 3,
+                        "radius": 5,
+                        "color": "#000000"
+                    }
+                },
+                {
+                    "key": 1,
+                    "type": "label",
+                    "dimensions": {
+                        "top_pos": 150,
+                        "left_pos": 250
+                    },
+                    "text": {
+                        "contents": "Enter your social security number:",
+                        "font_size": 12,
+                        "color": "#000000"
+                    }
+                },
+                {
+                    "key": 2,
+                    "type": "textfield",
+                    "background_color": "#FFFFFF",
+                    "dimensions": {
+                        "top_pos": 200,
+                        "left_pos": 250,
+                        "height": 30,
+                        "width": 100
+                    },
+                    "text": {
+                        "contents": "SSN",
+                        "font_size": 12,
+                        "color": "#333333"
+                    },
+                    "border": {
+                        "thickness": 2,
+                        "radius": 1,
+                        "color": "#FF0000"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -10,8 +10,8 @@ class WireframeElement extends React.Component {
             position: "absolute",
             top: element.dimensions.top_pos * zoomLevel,
             left: element.dimensions.left_pos * zoomLevel,
-            height: element.dimensions.height * zoomLevel,
-            width: element.dimensions.width * zoomLevel,
+            height: element.dimensions.height ? element.dimensions.height * zoomLevel : "",
+            width: element.dimensions.width ? element.dimensions.width * zoomLevel : "",
 
             borderWidth: element.border ? element.border.thickness * zoomLevel : 0,
             borderStyle: "solid",
@@ -25,7 +25,7 @@ class WireframeElement extends React.Component {
         }
         
         return (
-            <div style={elementStyle} className={element.type + "-element" + " valign-wrapper"}>
+            <div style={elementStyle} className={element.type + "-element valign-wrapper"}>
                 <p>{element.text ? element.text.contents : ""}</p>
             </div>
         );

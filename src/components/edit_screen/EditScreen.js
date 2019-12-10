@@ -15,7 +15,8 @@ class EditScreen extends Component {
         owner: this.props.wireframe.owner,
         wireframe: this.props.wireframe,
         zoomLevel: 1.0,
-        needToSave: false
+        needToSave: false,
+        redirect: false
     }
 
     notify = (message, color) => {
@@ -67,6 +68,10 @@ class EditScreen extends Component {
         });
     }
 
+    handleClose = () => {
+        this.setState({redirect: true});
+    }
+
     componentDidMount() {
         // Set timestamp of wireframe to now
         const wireframe = this.props.wireframe;
@@ -89,7 +94,7 @@ class EditScreen extends Component {
             width: this.state.wireframe.width * this.state.zoomLevel,
         }
 
-        if (!auth.uid) {
+        if (!auth.uid || this.state.redirect) {
             return <Redirect to="/" />;
         }
 
@@ -108,17 +113,19 @@ class EditScreen extends Component {
                                 <i className="icon-button material-icons" onClick={this.handleZoom.bind(this, 2)}>zoom_in</i>
                                 <i className="icon-button material-icons" onClick={this.handleZoom.bind(this, 0.5)}>zoom_out</i>
                                 <i className="icon-button material-icons" onClick={this.handleSave}>save</i>
-                            
-                                <Modal header="Close without saving?" trigger={trigger}
-                                    actions={
-                                        <div className="buttons">
-                                            <span id="yes_button" className="dialog_button" onClick={this.handleClose}>YES</span>
-                                            <span id="no_button" className="dialog_button modal-close">NO</span>
-                                        </div>
-                                    }
-                                >
+                                {this.state.needToSave ? 
+                                    <Modal header="Close without saving?" trigger={trigger}
+                                        actions={
+                                            <div className="buttons">
+                                                <span id="yes_button" className="dialog_button" onClick={this.handleClose}>YES</span>
+                                                <span id="no_button" className="dialog_button modal-close">NO</span>
+                                            </div>
+                                        }
+                                    >
                                     All unsaved data will be lost.
-                                </Modal>
+                                    </Modal> :
+                                    <i className="icon-button material-icons" onClick={this.handleClose}>close</i>
+                                }
                             </div>
 
                             <div id="wireframe-info">

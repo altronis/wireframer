@@ -69,6 +69,10 @@ div.banner {
   font-size: 18px;
 }
 
+.icon-button:hover {
+  color: lightgray;
+}
+
 #trashcan {
   font-size: 30pt;
   cursor: pointer;

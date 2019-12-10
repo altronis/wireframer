@@ -16,7 +16,8 @@ class EditScreen extends Component {
         wireframe: this.props.wireframe,
         zoomLevel: 1.0,
         needToSave: false,
-        redirect: false
+        redirect: false,
+        selectedElement: -1
     }
 
     notify = (message, color) => {
@@ -166,6 +167,14 @@ class EditScreen extends Component {
         this.setState({wireframe: newWireframe, needToSave: true});
     }
 
+    handleSelect(event, key) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        console.log(key);
+        this.setState({selectedElement: key});
+    }
+
     componentDidMount() {
         // Set timestamp of wireframe to now
         const wireframe = this.props.wireframe;
@@ -204,8 +213,8 @@ class EditScreen extends Component {
                     <div className="row">
                         <div id="leftbar" className="container white col l2 s3">
                             <div className="blue z-depth-1" id="actions">
-                                <i className="icon-button material-icons" onClick={this.handleZoom.bind(this, 2)}>zoom_in</i>
-                                <i className="icon-button material-icons" onClick={this.handleZoom.bind(this, 0.5)}>zoom_out</i>
+                                <i className="icon-button material-icons" onClick={() => this.handleZoom(2)}>zoom_in</i>
+                                <i className="icon-button material-icons" onClick={() => this.handleZoom(0.5)}>zoom_out</i>
                                 <i className="icon-button material-icons" onClick={this.handleSave}>save</i>
                                 {this.state.needToSave ? 
                                     <Modal header="Close without saving?" trigger={trigger}
@@ -246,30 +255,33 @@ class EditScreen extends Component {
                             </div>
 
                             <div id="add-elements">
-                                 <div class="add-element" onClick={this.handleNew.bind(this, "container")}>
+                                 <div className="add-element" onClick={() => this.handleNew("container")}>
                                     <div id="example-container"></div>
-                                    <p class="element-type">Container</p>
+                                    <p className="element-type">Container</p>
                                  </div>
-                                 <div class="add-element" onClick={this.handleNew.bind(this, "label")}>
+                                 <div className="add-element" onClick={() => this.handleNew("label")}>
                                     <div >Prompt for input:</div>
-                                    <p class="element-type">Label</p>
+                                    <p className="element-type">Label</p>
                                  </div>
-                                 <div class="add-element" onClick={this.handleNew.bind(this, "button")}>
+                                 <div className="add-element" onClick={() => this.handleNew("button")}>
                                     <div id="example-button">Submit</div>
-                                    <p class="element-type">Button</p>
+                                    <p className="element-type">Button</p>
                                  </div>
-                                 <div class="add-element" onClick={this.handleNew.bind(this, "textfield")}>
+                                 <div className="add-element" onClick={() => this.handleNew("textfield")}>
                                     <div id="example-textfield">Input</div>
-                                    <p class="element-type">Textfield</p>
+                                    <p className="element-type">Textfield</p>
                                  </div>
                             </div>
                         </div>
 
                         <div id="edit-window" className="container col l8 s6">
-                            <div id="wireframe-window" style={windowStyle}>
+                            <div id="wireframe-window" onClick={(e) => this.handleSelect(e, -1)} style={windowStyle}>
                                 {
                                     elements && elements.map(element => (
-                                        <WireframeElement element={element} zoomLevel={this.state.zoomLevel}/>
+                                        <WireframeElement key={element.key} element={element} 
+                                                          zoomLevel={this.state.zoomLevel} 
+                                                          handleSelect={this.handleSelect.bind(this)}
+                                                          selected={element.key === this.state.selectedElement} />
                                     ))
                                 }
                             </div>

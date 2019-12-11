@@ -71,6 +71,7 @@ class WireframeElement extends React.Component {
                     onDragStop={
                         (e, d) => this.props.handleResize(0, 0, d.x, d.y, element.key)
                     }
+                    bounds="parent"
                     >
                     <p>{element.text ? element.text.contents : ""}</p>
                     

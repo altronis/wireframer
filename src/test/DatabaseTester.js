@@ -1,13 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import wireframeJson from './TestWireframeData.json'
 import { getFirestore } from 'redux-firestore';
 
 class DatabaseTester extends React.Component {
-
-    // NOTE, BY KEEPING THE DATABASE PUBLIC YOU CAN
-    // DO THIS ANY TIME YOU LIKE WITHOUT HAVING
-    // TO LOG IN
     handleClear = () => {
         const fireStore = getFirestore();
         fireStore.collection('wireframes').get().then(function(querySnapshot){
@@ -42,6 +39,10 @@ class DatabaseTester extends React.Component {
     }
 
     render() {
+        if (this.props.auth.email !== "test@test.com") {
+            return <Redirect to="/" />;
+        }
+
         return (
             <div>
                 <button onClick={this.handleClear}>Clear Database</button>

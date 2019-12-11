@@ -33,7 +33,7 @@ class EditScreen extends Component {
         redirect: false,
         selectedElement: -1,
         selectedElementIndex: -1,
-        displayColorPicker: false
+        displayColorPickers: [false, false, false]
     }
 
     getSelectedElementIndex = (key) => {
@@ -98,20 +98,34 @@ class EditScreen extends Component {
 
         if (property === "text") 
             elementToChange.text.contents = newVal;
-        if (property === "font-size")
+        else if (property === "font-size")
             elementToChange.text.font_size = newVal;
+        else if (property === "border-thickness")
+            elementToChange.border.thickness = newVal;
+        else if (property === "border-radius")
+            elementToChange.border.radius = newVal;
 
         newWireframe.elements[this.state.selectedElementIndex] = elementToChange
         this.setState({wireframe: newWireframe, needToSave: true});
     }
 
-    handleClickColorPicker = () => {
+    handleClickColorPicker = (target) => {
         console.log("clicked");
-        this.setState({displayColorPicker: !this.state.displayColorPicker});
+        let oldState = this.state.displayColorPickers;
+        let newState = [false, false, false];
+
+        if (target === "text")
+            newState[0] = !oldState[0];
+        else if (target === "background")
+            newState[1] = !oldState[1];
+        else
+            newState[2] = !oldState[2];
+
+        this.setState({displayColorPickers: newState});
     }
 
     handleCloseColorPicker = () => {
-        this.setState({displayColorPicker: false});
+        this.setState({displayColorPickers: [false, false, false]});
     }
 
     handleChangeColor = (event, target) => {
@@ -120,6 +134,10 @@ class EditScreen extends Component {
 
         if (target === "text-color") 
             elementToChange.text.color = event.hex;
+        else if (target === "background-color")
+            elementToChange.background_color = event.hex;
+        else if (target === "border-color")
+            elementToChange.border.color = event.hex;
 
         newWireframe.elements[this.state.selectedElementIndex] = elementToChange
         this.setState({wirefraeme: newWireframe, needToSave: true});
@@ -154,10 +172,7 @@ class EditScreen extends Component {
             name: newWireframe.name,
             width: newWireframe.width
         }).then(() => {
-            this.setState({needToSave: false});
-            this.notify("Saved", "blue");
-        }).then(() => {
-            this.setState({redirect: true});
+            this.setState({needToSave: false, redirect: true});
         });
     }
 
@@ -264,16 +279,19 @@ class EditScreen extends Component {
         event.stopPropagation();
 
         console.log(key);
-        this.setState({selectedElement: key, selectedElementIndex: this.getSelectedElementIndex(key)});
+        this.setState({selectedElement: key, selectedElementIndex: this.getSelectedElementIndex(key),
+                        displayColorPickers: [false, false, false]});
     }
 
     handleResize(deltaWidth, deltaHeight, newLeft, newTop, key) {
         let newWireframe = {...this.state.wireframe};
         let elementToChange = newWireframe.elements.filter(element => element.key === key)[0];
-        elementToChange.dimensions.height += deltaHeight;
-        elementToChange.dimensions.width += deltaWidth;
-        elementToChange.dimensions.left_pos = newLeft;
-        elementToChange.dimensions.top_pos = newTop;
+        const zoomLevel = this.state.zoomLevel;
+
+        elementToChange.dimensions.height += deltaHeight / zoomLevel;
+        elementToChange.dimensions.width += deltaWidth / zoomLevel;
+        elementToChange.dimensions.left_pos = newLeft / zoomLevel;
+        elementToChange.dimensions.top_pos = newTop / zoomLevel;
 
         for (var i = 0; i < newWireframe.elements.length; i ++) {
             if (i === key)
@@ -409,9 +427,9 @@ class EditScreen extends Component {
                         
                         {selectedElement ? 
                         <div id="properties" className="container white col l2 s3">
-                                <div id="properties-header">Properties</div>
                                 {selectedElement.text ? 
                                 <div id="text-properties">
+                                    <div className="properties-header">Text Properties</div>
                                     <div className="input row">
                                         <div className="input-field property col s12">
                                             <label className="active" htmlFor="text">Text</label>
@@ -432,14 +450,72 @@ class EditScreen extends Component {
                                         <div className="input-field property col s12">
                                             <label className="active">Text color</label>
                                             <div>
-                                                <div className="color-picker-swatch" onClick={ this.handleClickColorPicker }>
+                                                <div className="color-picker-swatch" onClick={() => this.handleClickColorPicker("text")}>
                                                     <div className="color-picker-color" style={{background: selectedElement.text.color}} />
                                                 </div>
-                                                        { this.state.displayColorPicker ? <div className="color-picker-popover">
+                                                        { this.state.displayColorPickers[0] ? <div className="color-picker-popover">
                                                         <div className="color-picker-cover" onClick={ this.handleClose }/>
                                                         <ChromePicker color={ selectedElement.text.color } 
                                                                       disableAlpha={true}
                                                                       onChange={ (event) => this.handleChangeColor(event, "text-color") } />
+                                                </div> : null }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>: null}
+
+                                {selectedElement.background_color ? 
+                                <div id="background-properties">
+                                    <div className="properties-header">Background Properties</div>
+                                    <div className="input row">
+                                        <div className="input-field property col s12">
+                                            <label className="active">Background color</label>
+                                            <div>
+                                                <div className="color-picker-swatch" onClick={() => this.handleClickColorPicker("background") }>
+                                                    <div className="color-picker-color" style={{background: selectedElement.background_color}} />
+                                                </div>
+                                                        { this.state.displayColorPickers[1] ? <div className="color-picker-popover">
+                                                        <div className="color-picker-cover" onClick={ this.handleClose }/>
+                                                        <ChromePicker color={ selectedElement.background_color } 
+                                                                      disableAlpha={true}
+                                                                      onChange={ (event) => this.handleChangeColor(event, "background-color") } />
+                                                </div> : null }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>: null}
+
+                                {selectedElement.border ? 
+                                <div id="border-properties">
+                                    <div className="properties-header">Border Properties</div>
+                                    <div className="input row">
+                                        <div className="input-field property col s12">
+                                            <label className="active" htmlFor="border-thickness">Border thickness</label>
+                                            <input className="active" type="text" name="border-thickness" id="border-thickness" 
+                                                value={selectedElement.border.thickness}
+                                                onChange={(event) => this.handleChangeProperties(event)} />
+                                        </div>
+                                    </div>
+                                    <div className="input row">
+                                        <div className="input-field property col s12">
+                                            <label className="active" htmlFor="border-radius">Border radius</label>
+                                            <input className="active" type="text" name="border-radius" id="border-radius" 
+                                                value={selectedElement.border.radius} 
+                                                onChange={(event) => this.handleChangeProperties(event)} />
+                                        </div>
+                                    </div>
+                                    <div className="input row">
+                                        <div className="input-field property col s12">
+                                            <label className="active">Border color</label>
+                                            <div>
+                                                <div className="color-picker-swatch" onClick={() => this.handleClickColorPicker("border")}>
+                                                    <div className="color-picker-color" style={{background: selectedElement.border.color}} />
+                                                </div>
+                                                        { this.state.displayColorPickers[2] ? <div className="color-picker-popover">
+                                                        <div className="color-picker-cover" onClick={ this.handleClose }/>
+                                                        <ChromePicker color={ selectedElement.border.color } 
+                                                                      disableAlpha={true}
+                                                                      onChange={ (event) => this.handleChangeColor(event, "border-color") } />
                                                 </div> : null }
                                             </div>
                                         </div>

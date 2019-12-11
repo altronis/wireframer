@@ -49,6 +49,7 @@ div.banner {
 
 #leftbar {
   border-right: 2px solid gray;
+  border-bottom: 2px solid gray;
 }
 
 #wireframe-window {
@@ -57,6 +58,14 @@ div.banner {
 
 #properties {
   border-left: 2px solid gray;
+  border-bottom: 2px solid gray;
+}
+
+.properties-header {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 10px 0;
 }
 
 .button-element p {

@@ -5,25 +5,14 @@ import { compose } from 'redux';
 import { firestoreConnect } from 'react-redux-firebase';
 import { getFirestore } from 'redux-firestore';
 import {ToastContainer, toast} from 'react-toastify';
-import { Modal } from 'react-materialize';
 import WireframeElement from './WireframeElement'
 import { ChromePicker } from 'react-color';
+import ReactModal from 'react-modal';
 import 'react-toastify/dist/ReactToastify.css';
 
-const DialogBox = ({name, handleSaveClose, handleClose}) => {
-    return ( 
-        <div>
-            <div>Do you want to save changes to {name} ?</div>
-            <div id="dialog-buttons">
-                <span className="dialog_button" onClick={handleSaveClose}>SAVE</span>
-                <span id="yes_button" className="dialog_button" onClick={handleClose}>DON'T SAVE</span>
-                <span id="no_button" className="dialog_button modal-close" onClick={() => toast.dismiss("dialog")}>CANCEL</span>
-            </div>
-        </div>
-    );
-}
-
 class EditScreen extends Component {
+    _isMounted = false;
+
     state = {
         name: this.props.wireframe.name,
         owner: this.props.wireframe.owner,
@@ -33,7 +22,19 @@ class EditScreen extends Component {
         redirect: false,
         selectedElement: -1,
         selectedElementIndex: -1,
-        displayColorPickers: [false, false, false]
+        displayColorPickers: [false, false, false],
+        showModal: false
+    }
+
+    keyPress = (e) => {
+        if (this.state.selectedElement !== -1) {
+            if (e.keyCode == 46) {
+                this.handleDelete();
+            }
+            else if (e.keyCode == 68 && e.ctrlKey) {
+                this.handleDuplicate();
+            }
+        }
     }
 
     getSelectedElementIndex = (key) => {
@@ -52,21 +53,6 @@ class EditScreen extends Component {
             bodyClassName: 'message',
             progressClassName: 'progress-bar'
         });
-    }
-
-    dialog = () => {
-        if (!toast.isActive("dialog") && this.state.needToSave) {
-            toast(<DialogBox name={this.state.wireframe.name} handleSaveClose={this.handleSaveClose} handleClose={this.handleClose} />, {
-                autoClose: false,
-                toastId: "dialog",
-                position: "top-center",
-                bodyClassName: "dialog-message",
-                closeOnClick: false
-            });
-        }
-        else if (!this.state.needToSave) {
-            this.setState({redirect: true});
-        }
     }
 
     handleChange = () => {
@@ -163,21 +149,24 @@ class EditScreen extends Component {
     }
 
     handleSaveClose = () => {
-        const newWireframe = this.state.wireframe;
-        const thisDoc = getFirestore().collection("wireframes").doc(this.state.wireframe.id);
+        if (this._isMounted) {
+            const newWireframe = this.state.wireframe;
+            const thisDoc = getFirestore().collection("wireframes").doc(this.state.wireframe.id);
 
-        thisDoc.update({
-            elements: newWireframe.elements,
-            height: newWireframe.height,
-            name: newWireframe.name,
-            width: newWireframe.width
-        }).then(() => {
-            this.setState({needToSave: false, redirect: true});
-        });
+            thisDoc.update({
+                elements: newWireframe.elements,
+                height: newWireframe.height,
+                name: newWireframe.name,
+                width: newWireframe.width
+            }).then(() => {
+                this.setState({needToSave: false, redirect: true});
+            });
+        }
     }
 
     handleClose = () => {
-        this.setState({redirect: true});
+        if (this._isMounted)
+            this.setState({redirect: true});
     }
 
     handleNew = (type) => {
@@ -274,9 +263,34 @@ class EditScreen extends Component {
         this.setState({wireframe: newWireframe, needToSave: true});
     }
 
+    handleDelete() {
+        let newWireframe = {...this.state.wireframe};
+        let newElements = newWireframe.elements.filter(element => element.key !== this.state.selectedElement);
+        newWireframe.elements = newElements;
+
+        this.setState({wireframe: newWireframe, needToSave: true, selectedElement: -1, 
+                        selectedElementIndex: -1, displayColorPickers: [false, false, false]});
+    }
+
+    handleDuplicate() {
+        const numElements = this.state.wireframe.elements.length;
+        let newWireframe = {...this.state.wireframe};
+        let elementToCopy = newWireframe.elements.filter(element => element.key === this.state.selectedElement)[0];
+
+        let newElement = JSON.parse(JSON.stringify(elementToCopy));
+        newElement.key = numElements;
+        newElement.dimensions.top_pos = elementToCopy.dimensions.top_pos + 100;
+        newElement.dimensions.left_pos = elementToCopy.dimensions.left_pos + 100;
+
+        newWireframe.elements.push(newElement);
+        this.setState({wireframe: newWireframe, needToSave: true});
+    }
+
     handleSelect(event, key) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
 
         console.log(key);
         this.setState({selectedElement: key, selectedElementIndex: this.getSelectedElementIndex(key),
@@ -304,6 +318,14 @@ class EditScreen extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
+        document.addEventListener("keydown", this.keyPress, false);
+
+        const logo = document.getElementById("logo");
+        logo.addEventListener("click", () => this.openModal(), false);
+        const initials = document.getElementById("initials");
+        initials.addEventListener("click", () => this.openModal(), false);
+
         // Set timestamp of wireframe to now
         const wireframe = this.props.wireframe;
         const thisDoc = getFirestore().collection("wireframes").doc(wireframe.id);
@@ -314,6 +336,22 @@ class EditScreen extends Component {
         }).then(function() {
             console.log("Timestamp updated");
         });
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+        document.removeEventListener("keydown", this.keyPress, false);
+    }
+
+    openModal = () => {
+        if (this.state.needToSave)
+            this.setState({showModal: true});
+        else 
+            this.setState({redirect: true});
+    }
+
+    closeModal = () => {
+        this.setState({showModal: false});
     }
 
     render() {
@@ -329,16 +367,9 @@ class EditScreen extends Component {
             return <Redirect to="/" />;
         }
 
-        const logo = document.getElementById("logo");
-        logo.addEventListener("click", () => this.dialog());
-
-        const initials = document.getElementById("initials");
-        initials.addEventListener("click", () => this.dialog());
-
         try {
             let elements = this.state.wireframe.elements;
 
-            const trigger = <i className="icon-button material-icons">close</i>
             const selectedElementIndex = this.state.selectedElementIndex;
             const selectedElement = selectedElementIndex === -1 ? null : this.state.wireframe.elements[this.state.selectedElementIndex];
 
@@ -352,20 +383,16 @@ class EditScreen extends Component {
                                 <i className="icon-button material-icons" onClick={() => this.handleZoom(2)}>zoom_in</i>
                                 <i className="icon-button material-icons" onClick={() => this.handleZoom(0.5)}>zoom_out</i>
                                 <i className="icon-button material-icons" onClick={this.handleSave}>save</i>
-                                {this.state.needToSave ? 
-                                    <Modal header={"Do you want to save changes to " + this.state.wireframe.name + "?"} trigger={trigger}
-                                        actions={
-                                            <div className="buttons">
-                                                <span className="dialog_button" onClick={this.handleSaveClose}>SAVE</span>
-                                                <span id="yes_button" className="dialog_button" onClick={this.handleClose}>DON'T SAVE</span>
-                                                <span id="no_button" className="dialog_button modal-close">CANCEL</span>
-                                            </div>
-                                        }
-                                    >
-                                    All unsaved data will be lost.
-                                    </Modal> :
-                                    <i className="icon-button material-icons" onClick={this.handleClose}>close</i>
-                                }
+                                <i className="icon-button material-icons" onClick={this.state.needToSave ? this.openModal : this.handleClose}>close</i>
+
+                                <ReactModal id="save-modal" isOpen={this.state.showModal} ariaHideApp={false}>
+                                    <div id="modal-header">Do you want to save changes to {this.state.wireframe.name}?</div>
+                                    <div className="buttons">
+                                        <span className="dialog_button" onClick={this.handleSaveClose}>SAVE</span>
+                                        <span id="yes_button" className="dialog_button" onClick={this.handleClose}>DON'T SAVE</span>
+                                        <span id="no_button" className="dialog_button" onClick={this.closeModal}>CANCEL</span>
+                                    </div>
+                                </ReactModal>
                             </div>
 
                             <div id="wireframe-info">

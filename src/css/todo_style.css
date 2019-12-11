@@ -39,6 +39,10 @@ div.banner {
   transition: 0.25s;
 }
 
+.card-title {
+  color: black;
+}
+
 .red-background {
   background-color: #e85642 !important;
 }
@@ -82,17 +86,6 @@ div.banner {
   font-size: 18px;
 }
 
-.dialog-message {
-  color: black;
-  font-size: 20px;
-  text-align: center;
-}
-
-.Toastify__toast-container--top-center {
-  width: 600px !important;
-  margin-left: -300px !important;
-}
-
 .icon-button:hover {
   color: lightgray;
 }
@@ -122,6 +115,10 @@ div.banner {
   border-bottom: 2px solid lightgray;
 }
 
+#modal-header {
+  font-size: 20px;
+}
+
 .element.selected {
   box-shadow: 0 8px 17px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
 }
@@ -133,16 +130,6 @@ div.banner {
 
 .element-type {
   font-weight: bold;
-}
-
-#trashcan {
-  font-size: 30pt;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-#trashcan:hover {
-  color: #999999;
 }
 
 .clickable {

@@ -33,8 +33,17 @@ div.banner {
   margin-top: 20px;
 }
 
+.delete-wireframe {
+  cursor: pointer;
+}
+
 .wireframe_header {
   position: relative;
+}
+
+.card-content {
+  padding-right: 20px !important;
+  padding-left: 20px !important;
 }
 
 form {
@@ -173,7 +182,24 @@ tr.item_row, .clickable {
 }
 
 .buttons {
+  display: inline-block;
+}
+
+#save-modal {
+  height: 900px;
+  width: 600px;
+  margin: 0 auto;
   text-align: center;
+}
+
+#modal-header {
+  display: inline-block;
+  text-align: center;
+  margin-bottom: 18%;
+}
+
+.ReactModal__Overlay--after-open {
+  z-index: 2;
 }
 
 .dialog_button {

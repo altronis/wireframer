@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import WireframeCard from './WireframeCard';
@@ -32,9 +31,7 @@ class WireframeLinks extends React.Component {
         return (
             <div className="section">
                 {wireframes && wireframes.filter(wireframe => wireframe.owner === this.props.auth.email).map(wireframe => (
-                    <Link to={'/wireframe/' + wireframe.id} key={wireframe.id}>
-                        <WireframeCard wireframe={wireframe} />
-                    </Link>
+                    <WireframeCard key={wireframe.id} wireframe={wireframe} handleDeleteWireframe={this.props.handleDeleteWireframe.bind(this)}/>
                 ))}
             </div>
         );

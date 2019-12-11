@@ -5,6 +5,8 @@ import { Redirect } from 'react-router-dom';
 import { firestoreConnect } from 'react-redux-firebase';
 import WireframeLinks from './WireframeLinks'
 import { getFirestore } from 'redux-firestore';
+import ReactModal from 'react-modal';
+import thunder from './thunder.png';
 
 let needToUpdate;
 
@@ -12,6 +14,8 @@ class HomeScreen extends Component {
     state = {
         // ID of the new wireframe
         newWireframeID: null,
+        showModal: false,
+        wireframeToDelete: -1
     }
 
     handleNewWireframe = () => {
@@ -42,6 +46,21 @@ class HomeScreen extends Component {
         });
     }
 
+    handleDeleteWireframe = (event, key) => {
+        event.preventDefault();
+        this.setState({showModal: true, wireframeToDelete: key});
+    }
+
+    closeModal = () => {
+        this.setState({showModal: false}); 
+    }
+
+    deleteWireframe = (key) => {
+        const fireStore = getFirestore();
+        this.closeModal();
+        fireStore.collection("wireframes").doc(key).delete();
+    }
+
     render() {
         if (!this.props.auth.uid) {
             return <Redirect to="/login" />;
@@ -51,15 +70,32 @@ class HomeScreen extends Component {
         if (this.state.newWireframeID && !needToUpdate) {
             return <Redirect to={"/wireframe/" + this.state.newWireframeID} />;
         }
+        let wireframeToDelete;
+
+        try {
+            wireframeToDelete = this.props.wireframes.filter(wireframe => wireframe.id === this.state.wireframeToDelete)[0].name;
+        } catch(e) {
+            wireframeToDelete = "";
+        }
 
         return (
             <div className="dashboard container">
                 <div className="row">
-                    <div className="col s12 m4">
-                        <WireframeLinks />
+                    <div className="col s12 m6 l4">
+                        <WireframeLinks handleDeleteWireframe={this.handleDeleteWireframe.bind(this)} />
                     </div>
 
-                    <div className="col s8">
+                    <ReactModal id="save-modal" isOpen={this.state.showModal} ariaHideApp={false}>
+                        <span id="modal-header">Are you sure you want to delete {wireframeToDelete}?</span>
+                        <br></br>
+                        <span className="buttons">
+                            <img className="responsive-img" src={thunder} />
+                            <span id="yes_button" className="dialog_button" onClick={() => this.deleteWireframe(this.state.wireframeToDelete)}>YES</span>
+                            <span id="no_button" className="dialog_button" onClick={this.closeModal}>NO</span>
+                        </span>
+                    </ReactModal>
+
+                    <div className="col s12 m6 l8">
                         <div className="banner">
                             wireframer
                         </div>

@@ -7,7 +7,21 @@ import { getFirestore } from 'redux-firestore';
 import {ToastContainer, toast} from 'react-toastify';
 import { Modal } from 'react-materialize';
 import WireframeElement from './WireframeElement'
+import { ChromePicker } from 'react-color';
 import 'react-toastify/dist/ReactToastify.css';
+
+const DialogBox = ({name, handleSaveClose, handleClose}) => {
+    return ( 
+        <div>
+            <div>Do you want to save changes to {name} ?</div>
+            <div id="dialog-buttons">
+                <span className="dialog_button" onClick={handleSaveClose}>SAVE</span>
+                <span id="yes_button" className="dialog_button" onClick={handleClose}>DON'T SAVE</span>
+                <span id="no_button" className="dialog_button modal-close" onClick={() => toast.dismiss("dialog")}>CANCEL</span>
+            </div>
+        </div>
+    );
+}
 
 class EditScreen extends Component {
     state = {
@@ -17,7 +31,18 @@ class EditScreen extends Component {
         zoomLevel: 1.0,
         needToSave: false,
         redirect: false,
-        selectedElement: -1
+        selectedElement: -1,
+        selectedElementIndex: -1,
+        displayColorPicker: false
+    }
+
+    getSelectedElementIndex = (key) => {
+        let elements = this.state.wireframe.elements;
+        for (var i = 0; i < elements.length; i ++) {
+            if (elements[i].key === key)
+                return i;
+        }
+        return -1;
     }
 
     notify = (message, color) => {
@@ -30,14 +55,17 @@ class EditScreen extends Component {
     }
 
     dialog = () => {
-        if (!toast.isActive("dialog")) {
-            toast("Do you want to save changes to " + this.state.wireframe.name + "?", {
+        if (!toast.isActive("dialog") && this.state.needToSave) {
+            toast(<DialogBox name={this.state.wireframe.name} handleSaveClose={this.handleSaveClose} handleClose={this.handleClose} />, {
                 autoClose: false,
                 toastId: "dialog",
                 position: "top-center",
                 bodyClassName: "dialog-message",
                 closeOnClick: false
             });
+        }
+        else if (!this.state.needToSave) {
+            this.setState({redirect: true});
         }
     }
 
@@ -60,6 +88,41 @@ class EditScreen extends Component {
             this.notify("Update successful", "blue");
             this.setState({wireframe: newWireframe, needToSave: true});
         }
+    }
+
+    handleChangeProperties = (event) => {
+        const property = event.target.id;
+        const newVal = event.target.value;
+        let newWireframe = {...this.state.wireframe};
+        let elementToChange = newWireframe.elements[this.state.selectedElementIndex];
+
+        if (property === "text") 
+            elementToChange.text.contents = newVal;
+        if (property === "font-size")
+            elementToChange.text.font_size = newVal;
+
+        newWireframe.elements[this.state.selectedElementIndex] = elementToChange
+        this.setState({wireframe: newWireframe, needToSave: true});
+    }
+
+    handleClickColorPicker = () => {
+        console.log("clicked");
+        this.setState({displayColorPicker: !this.state.displayColorPicker});
+    }
+
+    handleCloseColorPicker = () => {
+        this.setState({displayColorPicker: false});
+    }
+
+    handleChangeColor = (event, target) => {
+        let newWireframe = {...this.state.wireframe};
+        let elementToChange = newWireframe.elements[this.state.selectedElementIndex];
+
+        if (target === "text-color") 
+            elementToChange.text.color = event.hex;
+
+        newWireframe.elements[this.state.selectedElementIndex] = elementToChange
+        this.setState({wirefraeme: newWireframe, needToSave: true});
     }
 
     handleZoom = (factor) => {
@@ -201,7 +264,7 @@ class EditScreen extends Component {
         event.stopPropagation();
 
         console.log(key);
-        this.setState({selectedElement: key});
+        this.setState({selectedElement: key, selectedElementIndex: this.getSelectedElementIndex(key)});
     }
 
     handleResize(deltaWidth, deltaHeight, newLeft, newTop, key) {
@@ -251,12 +314,15 @@ class EditScreen extends Component {
         const logo = document.getElementById("logo");
         logo.addEventListener("click", () => this.dialog());
 
+        const initials = document.getElementById("initials");
+        initials.addEventListener("click", () => this.dialog());
+
         try {
             let elements = this.state.wireframe.elements;
 
             const trigger = <i className="icon-button material-icons">close</i>
-            const banner = document.getElementById("logo");
-            console.log(banner);
+            const selectedElementIndex = this.state.selectedElementIndex;
+            const selectedElement = selectedElementIndex === -1 ? null : this.state.wireframe.elements[this.state.selectedElementIndex];
 
             return (
                 <div id="editor" className="container grey lighten-1">
@@ -340,6 +406,47 @@ class EditScreen extends Component {
                                 }
                             </div>
                         </div>
+                        
+                        {selectedElement ? 
+                        <div id="properties" className="container white col l2 s3">
+                                <div id="properties-header">Properties</div>
+                                {selectedElement.text ? 
+                                <div id="text-properties">
+                                    <div className="input row">
+                                        <div className="input-field property col s12">
+                                            <label className="active" htmlFor="text">Text</label>
+                                            <input className="active" type="text" name="text" id="text" 
+                                                value={selectedElement.text.contents}
+                                                onChange={(event) => this.handleChangeProperties(event)} />
+                                        </div>
+                                    </div>
+                                    <div className="input row">
+                                        <div className="input-field property col s12">
+                                            <label className="active" htmlFor="font-size">Font size</label>
+                                            <input className="active" type="text" name="font-size" id="font-size" 
+                                                value={selectedElement.text.font_size} 
+                                                onChange={(event) => this.handleChangeProperties(event)} />
+                                        </div>
+                                    </div>
+                                    <div className="input row">
+                                        <div className="input-field property col s12">
+                                            <label className="active">Text color</label>
+                                            <div>
+                                                <div className="color-picker-swatch" onClick={ this.handleClickColorPicker }>
+                                                    <div className="color-picker-color" style={{background: selectedElement.text.color}} />
+                                                </div>
+                                                        { this.state.displayColorPicker ? <div className="color-picker-popover">
+                                                        <div className="color-picker-cover" onClick={ this.handleClose }/>
+                                                        <ChromePicker color={ selectedElement.text.color } 
+                                                                      disableAlpha={true}
+                                                                      onChange={ (event) => this.handleChangeColor(event, "text-color") } />
+                                                </div> : null }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>: null}
+                        </div>
+                        : null}
                     </div>
                 </div>
             );

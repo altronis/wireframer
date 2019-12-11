@@ -68,9 +68,13 @@ form {
   margin: 0;
 }
 
+.input-field.property {
+  margin: 5px 0;
+}
+
 .add-element {
   text-align: center;
-  padding: 30px 0;
+  padding: 20px 0;
   cursor: pointer;
 }
 
@@ -176,6 +180,41 @@ tr.item_row, .clickable {
   cursor: pointer;
   margin: 0 15px;
   border: none;
+}
+
+#dialog-buttons {
+  margin-top: 20px;
+}
+
+.color-picker-color {
+  width: 36px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+.color-picker-swatch {
+  width: 46px;
+  margin-top: 15px;
+  padding: 5px;
+  background: white;
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+  display: 'inline-block';
+  cursor: 'pointer';
+}
+
+.color-picker-popover {
+  position: absolute;
+  right: 0;
+  z-index: 2;
+}
+
+color-picker-cover {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
 .item-form-button {

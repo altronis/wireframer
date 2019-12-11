@@ -55,6 +55,10 @@ div.banner {
   background-color: white;
 }
 
+#properties {
+  border-left: 2px solid gray;
+}
+
 .button-element p {
   margin: auto;
 }
@@ -71,6 +75,13 @@ div.banner {
 
 .dialog-message {
   color: black;
+  font-size: 20px;
+  text-align: center;
+}
+
+.Toastify__toast-container--top-center {
+  width: 600px !important;
+  margin-left: -300px !important;
 }
 
 .icon-button:hover {

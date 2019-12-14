@@ -27,6 +27,8 @@ class EditScreen extends Component {
     }
 
     keyPress = (e) => {
+        e.preventDefault();
+
         if (this.state.selectedElement !== -1) {
             if (e.keyCode == 46) {
                 this.handleDelete();

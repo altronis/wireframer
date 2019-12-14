@@ -6,7 +6,6 @@ import { firestoreConnect } from 'react-redux-firebase';
 import WireframeLinks from './WireframeLinks'
 import { getFirestore } from 'redux-firestore';
 import ReactModal from 'react-modal';
-import thunder from './thunder.png';
 
 let needToUpdate;
 
@@ -89,7 +88,6 @@ class HomeScreen extends Component {
                         <span id="modal-header">Are you sure you want to delete {wireframeToDelete}?</span>
                         <br></br>
                         <span className="buttons">
-                            <img className="responsive-img" src={thunder} />
                             <span id="yes_button" className="dialog_button" onClick={() => this.deleteWireframe(this.state.wireframeToDelete)}>YES</span>
                             <span id="no_button" className="dialog_button" onClick={this.closeModal}>NO</span>
                         </span>

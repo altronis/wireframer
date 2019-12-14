@@ -186,7 +186,7 @@ tr.item_row, .clickable {
 }
 
 #save-modal {
-  height: 900px;
+  height: 200px;
   width: 600px;
   margin: 0 auto;
   text-align: center;

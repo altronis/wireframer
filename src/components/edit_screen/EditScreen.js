@@ -23,17 +23,17 @@ class EditScreen extends Component {
         selectedElement: -1,
         selectedElementIndex: -1,
         displayColorPickers: [false, false, false],
-        showModal: false
+        showModal: false,
+        test:console.log("test")
     }
 
     keyPress = (e) => {
-        e.preventDefault();
-
         if (this.state.selectedElement !== -1) {
             if (e.keyCode == 46) {
                 this.handleDelete();
             }
             else if (e.keyCode == 68 && e.ctrlKey) {
+                e.preventDefault();
                 this.handleDuplicate();
             }
         }
@@ -48,13 +48,16 @@ class EditScreen extends Component {
         return -1;
     }
 
-    notify = (message, color) => {
-        toast(message, {
-            position: toast.POSITION.BOTTOM_LEFT,
-            className: color + '-background',
-            bodyClassName: 'message',
-            progressClassName: 'progress-bar'
-        });
+    notify = (message, color, id) => {
+        if (!toast.isActive(id)) {
+            toast(message, {
+                position: toast.POSITION.BOTTOM_LEFT,
+                className: color + '-background',
+                bodyClassName: 'message',
+                progressClassName: 'progress-bar',
+                toastId: id
+            });
+        }
     }
 
     handleChange = () => {
@@ -66,14 +69,14 @@ class EditScreen extends Component {
         if (parseInt(newHeight) != newHeight || parseInt(newWidth) != newWidth || 
             parseInt(newHeight) < 1 || parseInt(newHeight) > 5000 ||
             parseInt(newWidth) < 1 || parseInt(newWidth) > 5000) {
-                this.notify("Invalid wireframe dimensions", "red");
+                this.notify("Invalid wireframe dimensions", "red", "invalid_dims");
         }
         else {     
             let newWireframe = {...this.state.wireframe};
             newWireframe.name = newName;
             newWireframe.height = parseInt(newHeight);
             newWireframe.width = parseInt(newWidth);
-            this.notify("Update successful", "blue");
+            this.notify("Update successful", "blue", "update_succ");
             this.setState({wireframe: newWireframe, needToSave: true});
         }
     }
@@ -86,12 +89,33 @@ class EditScreen extends Component {
 
         if (property === "text") 
             elementToChange.text.contents = newVal;
-        else if (property === "font-size")
-            elementToChange.text.font_size = newVal;
-        else if (property === "border-thickness")
-            elementToChange.border.thickness = newVal;
-        else if (property === "border-radius")
-            elementToChange.border.radius = newVal;
+        else if (property === "font-size") {
+            if (!isNaN(newVal)) {
+                if (newVal > elementToChange.dimensions.height || newVal > elementToChange.dimensions.width) 
+                    this.notify("Font size is too large", "red", "font_large");
+                else   
+                    elementToChange.text.font_size = newVal;
+            }
+            else 
+                this.notify("Invalid font size", "red", "font_invalid");
+        }
+        else if (property === "border-thickness") {
+            if (!isNaN(newVal)) {
+                if (newVal > elementToChange.dimensions.height / 2 || newVal > elementToChange.dimensions.width / 2) 
+                    this.notify("Border thickness is too large", "red", "thickness_large");
+                else   
+                    elementToChange.border.thickness = newVal;
+            }
+            else 
+                this.notify("Invalid border thickness", "red", "thickness_invalid");
+        }
+        else if (property === "border-radius") {
+            if (!isNaN(newVal)) {
+                elementToChange.border.radius = newVal;
+            }
+            else 
+                this.notify("Invalid border radius", "red", "radius_invalid");
+        }
 
         newWireframe.elements[this.state.selectedElementIndex] = elementToChange
         this.setState({wireframe: newWireframe, needToSave: true});
@@ -146,7 +170,7 @@ class EditScreen extends Component {
             width: newWireframe.width
         }).then(() => {
             this.setState({needToSave: false});
-            this.notify("Saved", "blue");
+            this.notify("Saved", "blue", "save");
         });
     }
 
@@ -572,7 +596,7 @@ const mapStateToProps = (state, ownProps) => {
     wireframe.id = id;
 
   return {
-    wireframes,
+   wireframes,
     wireframe,
     auth: state.firebase.auth,
   };

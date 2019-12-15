@@ -74,11 +74,6 @@ class WireframeElement extends React.Component {
                     bounds="parent"
                     >
                     <p>{element.text ? element.text.contents : ""}</p>
-                    
-                    {/* <div style={topLeftHandleStyle} className="resize-handle"></div>
-                    <div style={bottomLeftHandleStyle} className="resize-handle"></div>
-                    <div style={topRightHandleStyle} className="resize-handle"></div>
-                    <div style={bottomRightHandleStyle} className="resize-handle"></div> */}
                 </Rnd>
         );
     }

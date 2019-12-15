@@ -181,6 +181,10 @@ tr.item_row, .clickable {
   display: flex !important;
 }
 
+.element p {
+  overflow: hidden;
+}
+
 .buttons {
   display: inline-block;
 }

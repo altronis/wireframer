@@ -1,2 +1,2 @@
 # wireframer
-Wireframer project for CSE 316 final project
+A React application for students to easily make and update user interface mockups
